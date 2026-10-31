@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Check untrusted input for known XSS patterns across all supported browser contexts.">
+  <title>Cross-Site Scripting (XSS) Attack Detection System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <div class="header-top">
+        <a class="brand-lockup" href="/" aria-label="XSS Shield home"><span class="brand-mark" aria-hidden="true">X</span><span class="brand-copy"><span class="brand-title">XSS Shield</span><span class="system-subtitle">Cross-Site Scripting Analysis</span></span></a>
+        <nav class="primary-nav" aria-label="Main navigation"><a class="nav-button" href="#analysis-form">Analyzer</a><a class="nav-button" href="#history-section">Recent analyses</a></nav>
+        <div class="header-actions"><button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false"><span class="theme-icon" aria-hidden="true"><span class="theme-sun">☼</span><span class="theme-moon">☾</span></span><span id="theme-label">Dark mode</span></button></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page-intro" aria-labelledby="page-title">
+        <span class="eyebrow">XSS pattern inspection</span>
+        <h1 id="page-title">Context-aware <em>analysis.</em></h1>
+        <p>Inspect an untrusted string against known XSS patterns. One submission checks every supported context.</p>
+      </section>
+
+      <div class="workbench">
+      <form id="analysis-form" class="panel analysis-panel" aria-labelledby="input-panel-label">
+        <div class="panel-header">
+          <div>
+            <span class="panel-label">01 / Input</span>
+            <h2 id="input-panel-label">Analyze a string</h2>
+          </div>
+          <span class="endpoint-label">AUTO SCAN</span>
+        </div>
+
+        <p class="auto-scan-note">All four supported contexts are checked automatically. Context labels identify which rules matched; they do not infer how another application uses this string.</p>
+
+        <div class="examples-bar" aria-label="Example inputs">
+          <span class="examples-caption">Load an example</span>
+          <button type="button" class="example-chip" data-example="script">Script element</button>
+          <button type="button" class="example-chip" data-example="url">JavaScript URL</button>
+          <button type="button" class="example-chip" data-example="benign">Normal text</button>
+        </div>
+
+        <div class="input-wrapper">
+          <div class="input-heading"><label class="group-label" for="input">Your input</label><span class="input-hint"><span class="input-state-dot" aria-hidden="true"></span>Plain text · never executed</span></div>
+          <textarea id="input" name="input" class="text-input" rows="7" spellcheck="false" placeholder="Paste or type a string for analysis…"></textarea>
+          <div class="textarea-foot"><span>Do not include secrets or personal information.</span><span id="character-count">0 characters</span></div>
+        </div>
+
+        <div class="action-row">
+          <div class="button-cluster">
+            <button id="analyze-button" class="btn btn-primary" type="submit"><span class="loading-spinner" aria-hidden="true" hidden></span><span class="button-label">Analyze input</span><span class="button-arrow" aria-hidden="true">→</span></button>
+            <button id="clear-button" class="btn btn-clear" type="button">Clear</button>
+          </div>
+          <span class="meta-note">No input is rendered as HTML</span>
+        </div>
+      </form>
+
+      <section id="result" class="result-section" aria-labelledby="result-title" aria-live="polite" hidden>
+        <div class="panel-header">
+          <div><span class="panel-label">02 / Result</span><h2 id="result-title" class="classification-title">Analysis result</h2></div>
+          <span id="result-context" class="context-tag">AUTO SCAN</span>
+        </div>
+        <div class="analysis-summary" aria-label="Analysis summary">
+          <div class="summary-item"><span>Classification</span><strong id="summary-classification">—</strong></div>
+          <div class="summary-item"><span>Contexts checked</span><strong id="summary-context">All supported contexts</strong></div>
+          <div class="summary-item"><span>Matched rules</span><strong id="summary-rule-count">0</strong></div>
+        </div>
+        <div class="result-status-card" data-status="neutral">
+          <p id="result-message" class="status-explanation"></p>
+        </div>
+        <div class="disclaimer-box"><strong>READ THE RESULT</strong> No match does not prove safety. Exploitability depends on how an application handles the value.</div>
+        <div id="matched-rules-section" class="rules-container" hidden>
+          <h3 class="section-subtitle">Matched rule details</h3>
+          <ul id="matched-rules" class="matched-rules"></ul>
+        </div>
+        <div class="result-actions"><button id="export-json-button" class="btn btn-secondary" type="button">Download JSON report</button><span class="export-note">Contains the submitted input and analysis response</span></div>
+        <div class="submitted-input-section">
+          <h3 class="section-subtitle">Submitted input · displayed as text</h3>
+          <pre id="submitted-input" class="safe-code-viewer"></pre>
+        </div>
+      </section>
+      </div>
+
+      <section id="history-section" class="history-section panel" aria-labelledby="history-title">
+        <div class="panel-header history-header">
+          <div><span class="panel-label">This browser only</span><h2 id="history-title">Recent analyses</h2></div>
+          <button id="clear-history-button" class="btn btn-clear" type="button">Clear history</button>
+        </div>
+        <p id="history-empty" class="history-empty">Completed analyses are saved in this browser on this device. Clear the history to remove them.</p>
+        <ol id="analysis-history" class="analysis-history" aria-live="polite"></ol>
+      </section>
+    </main>
+
+    <footer class="page-footer"><span>Rule-based educational analysis</span><span>Detection only · No match does not prove safety</span></footer>
+  </div>
+</body>
+</html>

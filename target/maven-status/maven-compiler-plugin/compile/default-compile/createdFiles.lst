@@ -1,0 +1,10 @@
+com/example/xssdetector/service/XssDetectionService.class
+com/example/xssdetector/XssDetectorApplication.class
+com/example/xssdetector/model/MatchedRule.class
+com/example/xssdetector/model/XssAnalysisResponse.class
+com/example/xssdetector/model/XssContext.class
+com/example/xssdetector/model/XssAnalysisRequest.class
+com/example/xssdetector/model/DetectionRule.class
+com/example/xssdetector/controller/XssController.class
+com/example/xssdetector/model/DetectionClassification.class
+com/example/xssdetector/service/InputNormalizer.class

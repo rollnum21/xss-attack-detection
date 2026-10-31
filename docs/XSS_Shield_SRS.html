@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Software Requirements Specification — XSS Shield</title>
+  <style>
+    @page { size: A4; margin: 18mm 17mm 18mm 17mm; }
+    :root { --forest: #173b2b; --green: #176044; --sage: #e8f0e8; --line: #bfd0c1; --ink: #17251d; --muted: #405449; --coral: #a83b2c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); font: 10.5pt/1.5 Arial, Helvetica, sans-serif; }
+    h1, h2, h3, h4 { color: var(--forest); page-break-after: avoid; }
+    h1 { margin: 0 0 8pt; font-size: 20pt; border-bottom: 2px solid var(--forest); padding-bottom: 5pt; }
+    h2 { margin: 17pt 0 7pt; font-size: 14pt; }
+    h3 { margin: 12pt 0 5pt; font-size: 11.5pt; }
+    h4 { margin: 9pt 0 4pt; font-size: 10.5pt; }
+    p { margin: 0 0 7pt; }
+    ul, ol { margin: 4pt 0 8pt 19pt; padding: 0; }
+    li { margin: 2pt 0; }
+    a { color: var(--green); }
+    code, pre, .mono { font-family: "Courier New", Courier, monospace; }
+    code { color: #183f2d; background: #edf4ed; padding: 1pt 3pt; }
+    .cover { min-height: 250mm; display: flex; flex-direction: column; justify-content: space-between; border: 1.5pt solid var(--forest); padding: 20mm 16mm; }
+    .cover-top { border-left: 7pt solid var(--forest); padding-left: 12pt; }
+    .department { margin: 0; color: var(--green); font-weight: bold; font-size: 11pt; letter-spacing: .5pt; text-transform: uppercase; }
+    .institute { margin: 5pt 0 0; color: var(--muted); font-size: 10pt; }
+    .cover-title { margin: 34mm 0 0; color: var(--forest); font-size: 30pt; line-height: 1.12; }
+    .cover-subtitle { margin-top: 10pt; color: var(--muted); font-size: 14pt; }
+    .cover-rule { width: 58mm; height: 4pt; margin: 16pt 0; background: var(--green); }
+    .cover-meta { width: 100%; border-collapse: collapse; }
+    .cover-meta td { width: 50%; padding: 8pt 9pt; vertical-align: top; border: 1pt solid var(--line); }
+    .cover-meta strong { display: block; margin-bottom: 3pt; color: var(--forest); font-size: 8.5pt; letter-spacing: .5pt; text-transform: uppercase; }
+    .small { color: var(--muted); font-size: 8.5pt; }
+    .page-break { page-break-before: always; }
+    .section-kicker { color: var(--green); font-size: 8.5pt; font-weight: bold; letter-spacing: 1.1pt; text-transform: uppercase; }
+    .note { margin: 8pt 0; padding: 8pt 10pt; border-left: 3pt solid var(--green); background: var(--sage); color: #274432; }
+    .warning { border-left-color: var(--coral); background: #fbefec; color: #633127; }
+    table { width: 100%; margin: 7pt 0 12pt; border-collapse: collapse; page-break-inside: avoid; }
+    th { color: #fff; background: var(--forest); font-weight: bold; text-align: left; }
+    th, td { padding: 6pt 7pt; border: .75pt solid var(--line); vertical-align: top; }
+    tr:nth-child(even) td { background: #f6f9f5; }
+    .diagram { margin: 9pt 0 12pt; padding: 11pt 12pt; border: 1pt solid var(--line); background: #f8faf7; color: var(--forest); font: 9pt/1.65 "Courier New", Courier, monospace; white-space: pre-wrap; }
+    .requirement-id { width: 16%; font-family: "Courier New", Courier, monospace; font-weight: bold; color: var(--forest); }
+    .priority { width: 10%; text-align: center; font-weight: bold; }
+    .toc li { margin: 4pt 0; }
+    .screenshot-placeholder { min-height: 52mm; margin: 8pt 0; display: flex; align-items: center; justify-content: center; border: 1.5pt dashed #78917d; background: #f1f6f0; color: var(--muted); font-size: 10pt; text-align: center; }
+    .footer-note { margin-top: 16pt; padding-top: 6pt; border-top: .75pt solid var(--line); color: var(--muted); font-size: 8pt; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div>
+      <div class="cover-top">
+        <p class="department">Department of Computer Science &amp; Engineering</p>
+        <p class="institute">[Name of Institute / University, City]</p>
+      </div>
+      <h1 class="cover-title">SOFTWARE REQUIREMENTS<br>SPECIFICATION (SRS)</h1>
+      <div class="cover-rule"></div>
+      <p class="cover-subtitle"><strong>Project Title:</strong> Cross-Site Scripting (XSS) Attack Detection System</p>
+      <p class="cover-subtitle"><strong>Product Name:</strong> XSS Shield</p>
+      <p class="small">Academic structure inspired by IEEE Std 830-1998 recommended practice.</p>
+    </div>
+    <table class="cover-meta">
+      <tr>
+        <td><strong>Submitted By</strong>[Student Name] (Roll No: [Roll Number])<br>[Student Name] (Roll No: [Roll Number])<br>[Student Name] (Roll No: [Roll Number])</td>
+        <td><strong>Under the Guidance of</strong>Prof./Dr. [Supervisor Name]<br>[Designation]<br>Department of Computer Science &amp; Engineering</td>
+      </tr>
+      <tr>
+        <td><strong>Degree</strong>Bachelor of Technology (B.Tech)<br>3rd Year Project Specification</td>
+        <td><strong>Submission Details</strong>Academic Year: 2026–2027<br>Date: [DD-MM-YYYY]</td>
+      </tr>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">Document control</p>
+    <h1>Document Revision &amp; Approval History</h1>
+    <table>
+      <tr><th>Version</th><th>Date</th><th>Description / Major Change</th><th>Prepared By</th><th>Reviewed By</th></tr>
+      <tr><td>0.1</td><td>[DD-MM-YYYY]</td><td>Initial SRS draft and scope definition.</td><td>Project Team</td><td>Project Guide</td></tr>
+      <tr><td>1.0</td><td>[DD-MM-YYYY]</td><td>Final SRS baseline for academic review.</td><td>Project Team</td><td>Guide / Committee</td></tr>
+    </table>
+    <div class="note">This document specifies the current educational implementation of XSS Shield. Requirements are deliberately limited to the project’s implemented deterministic XSS analysis scope.</div>
+
+    <p class="section-kicker">Contents</p>
+    <h1>Table of Contents</h1>
+    <ol class="toc">
+      <li>Introduction</li>
+      <li>Overall Description</li>
+      <li>System Features and Functional Requirements</li>
+      <li>External Interface Requirements</li>
+      <li>Non-Functional Requirements</li>
+      <li>System Design and Analysis Models</li>
+      <li>Acceptance Criteria and Testing</li>
+      <li>Academic Review and Sign-Off</li>
+    </ol>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">1. Introduction</p>
+    <h1>1. Introduction</h1>
+    <h2>1.1 Purpose</h2>
+    <p>This Software Requirements Specification defines the functionality, interfaces, constraints, and quality requirements for the <strong>Cross-Site Scripting (XSS) Attack Detection System</strong>, named <strong>XSS Shield</strong>. It is a web-based educational analysis tool that examines a user-supplied string for a defined set of known XSS-related constructs. The document is intended for the student team, academic guide, evaluators, and future maintainers.</p>
+
+    <h2>1.2 Scope of the System</h2>
+    <p>XSS Shield accepts untrusted input through a browser interface or a REST API. It validates and normalizes the input, then checks deterministic rules across all four supported contexts: <code>HTML_BODY</code>, <code>HTML_ATTRIBUTE</code>, <code>URL</code>, and <code>JAVASCRIPT</code>. It returns an explainable classification, the contexts checked, matching rules, CWE-79 association, recommendations, and standards references.</p>
+    <ul>
+      <li><strong>In scope:</strong> Plain-text input analysis; automatic context scanning; deterministic rule matching; JSON API; safe result display; local browser history; JSON result export; light and dark interface themes; unit and API tests.</li>
+      <li><strong>Out of scope:</strong> User authentication, database storage, real-time monitoring, WAF deployment, complete HTML parsing, exploit execution, automatic code repair, and guarantees that every XSS technique will be detected.</li>
+      <li><strong>Expected benefit:</strong> A clear, repeatable demonstration of context-aware XSS pattern analysis and secure handling of untrusted input.</li>
+    </ul>
+
+    <h2>1.3 Definitions, Acronyms, and Abbreviations</h2>
+    <table>
+      <tr><th>Term</th><th>Definition</th></tr>
+      <tr><td>SRS</td><td>Software Requirements Specification.</td></tr>
+      <tr><td>XSS</td><td>Cross-Site Scripting: a weakness that can arise when untrusted input is interpreted in an executable browser context.</td></tr>
+      <tr><td>API</td><td>Application Programming Interface. This project exposes a REST endpoint using JSON.</td></tr>
+      <tr><td>REST</td><td>Representational State Transfer style used for the web API.</td></tr>
+      <tr><td>CWE-79</td><td>MITRE classification for improper neutralization of input during web page generation.</td></tr>
+      <tr><td>Context</td><td>The browser destination grammar in which input may be interpreted, such as HTML body, attribute, URL, or JavaScript.</td></tr>
+      <tr><td>Deterministic rule</td><td>A fixed rule with a predictable match result for the same normalized input and context; it is not a probability model.</td></tr>
+    </table>
+
+    <h2>1.4 References</h2>
+    <ul>
+      <li>IEEE Std 830-1998, <em>IEEE Recommended Practice for Software Requirements Specifications</em>.</li>
+      <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">Cross Site Scripting Prevention Cheat Sheet</a>.</li>
+      <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/DOM_based_XSS_Prevention_Cheat_Sheet.html">DOM Based XSS Prevention Cheat Sheet</a>.</li>
+      <li>OWASP, <a href="https://cheatsheetseries.owasp.org/cheatsheets/XSS_Filter_Evasion_Cheat_Sheet.html">XSS Filter Evasion Cheat Sheet</a>.</li>
+      <li>MITRE, <a href="https://cwe.mitre.org/data/definitions/79.html">CWE-79</a>.</li>
+    </ul>
+
+    <h2>1.5 Document Overview</h2>
+    <p>Section 2 describes the product and its environment. Section 3 lists functional requirements. Section 4 defines the browser and API interfaces. Section 5 specifies quality and security requirements. Section 6 documents analysis models. Section 7 gives acceptance criteria and the test approach.</p>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">2. Overall Description</p>
+    <h1>2. Overall Description</h1>
+    <h2>2.1 Product Perspective</h2>
+    <p>The project is a self-contained web application. A Spring Boot application serves the browser interface and provides the REST API. No user account, database, external scanner, or third-party inference service is required for the implemented system.</p>
+    <div class="diagram">+----------------+       POST /api/analyze       +-----------------------+
+| Browser User   | ----------------------------> | Spring Boot API        |
+| HTML/CSS/JS UI |                               | XssController          |
++----------------+ <---------------------------- +-----------+-----------+
+       |                   JSON result                       |
+       |                                                      v
+       |                                           +-----------------------+
+       |                                           | Detection Service     |
+       |                                           | - Validation          |
+       |                                           | - Normalization       |
+       |                                           | - Context rule engine |
+       |                                           +-----------------------+</div>
+
+    <h2>2.2 User Classes and Characteristics</h2>
+    <table>
+      <tr><th>User Class</th><th>Technical Proficiency</th><th>Primary Activities</th></tr>
+      <tr><td>Student / Demonstrator</td><td>Basic to intermediate</td><td>Enter a sample string, review the result, use example inputs, view history, and export a JSON report.</td></tr>
+      <tr><td>Developer / Security Learner</td><td>Intermediate</td><td>Inspect matched rule identifiers, contexts, recommendations, and linked security references.</td></tr>
+      <tr><td>API Client</td><td>Intermediate to advanced</td><td>Send JSON requests to the API in automatic mode or an explicit supported context.</td></tr>
+    </table>
+
+    <h2>2.3 Operating Environment</h2>
+    <ul>
+      <li><strong>Client:</strong> A modern browser capable of HTML5, CSS, and JavaScript. The interface is responsive for desktop and mobile widths.</li>
+      <li><strong>Server:</strong> Java 17 runtime, Spring Boot, and embedded Tomcat.</li>
+      <li><strong>Build:</strong> Apache Maven.</li>
+      <li><strong>Communication:</strong> UTF-8 JSON over HTTP for local academic deployment; HTTPS is recommended when deployed beyond a local environment.</li>
+      <li><strong>Storage:</strong> The last ten completed analyses may be stored only in the user’s browser <code>localStorage</code>. The backend has no database in the present scope.</li>
+    </ul>
+
+    <h2>2.4 Design and Implementation Constraints</h2>
+    <ul>
+      <li>The backend must remain a deterministic context-aware rule engine; it must not introduce arbitrary risk scores, percentage likelihoods, or AI confidence claims.</li>
+      <li>Submitted strings must be treated as data. They must never be executed by the backend or rendered as HTML by the frontend.</li>
+      <li>The project uses only the four documented contexts and a defined finite rule set.</li>
+      <li>The frontend and backend must exchange only the documented JSON request and response format.</li>
+      <li>The system is an educational detector and does not replace output encoding, sanitization, Content Security Policy, or secure framework usage.</li>
+    </ul>
+
+    <h2>2.5 Assumptions and Dependencies</h2>
+    <ul>
+      <li>The application is started locally using Maven and is reachable by the browser.</li>
+      <li>The user submits a textual string and does not rely on the tool to establish real application exploitability.</li>
+      <li>Internet access is optional for core analysis; it is only needed when the user opens linked OWASP or MITRE references.</li>
+      <li>The browser permits local storage if recent-analysis history and theme preference are to persist.</li>
+    </ul>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">3. System Features and Functional Requirements</p>
+    <h1>3. System Features and Functional Requirements</h1>
+    <h2>3.1 Module 1: Input and Automatic Context Scan</h2>
+    <table>
+      <tr><th>Req ID</th><th>Feature Description</th><th>Input / Validation Rule</th><th>Priority</th></tr>
+      <tr><td class="requirement-id">FR-1.1</td><td>The system shall provide a text area for users to enter or paste an input string.</td><td>Input is accepted as plain text and must contain at least one non-whitespace character before analysis.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-1.2</td><td>The system shall offer example strings for a script element, JavaScript URL, and normal text.</td><td>Selecting an example replaces only the text area value; it does not execute the string.</td><td class="priority">Medium</td></tr>
+      <tr><td class="requirement-id">FR-1.3</td><td>The web interface shall submit user input in automatic scan mode.</td><td>The request context is <code>AUTO</code>, which causes analysis of all supported contexts.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-1.4</td><td>The system shall display a character count and provide a Clear action.</td><td>The count updates on input. Clear removes the active text and hides the current result.</td><td class="priority">Low</td></tr>
+    </table>
+
+    <h2>3.2 Module 2: Deterministic Detection Engine</h2>
+    <table>
+      <tr><th>Req ID</th><th>Feature Description</th><th>Input / Validation Rule</th><th>Priority</th></tr>
+      <tr><td class="requirement-id">FR-2.1</td><td>The service shall reject blank input and invalid or missing context values with an <code>INVALID_INPUT</code> result.</td><td>Blank input, unsupported context, or unreadable JSON body is invalid.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-2.2</td><td>The service shall normalize outer whitespace and case before rule matching.</td><td>Normalization must not execute input, decode entities, or perform complex canonicalization.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-2.3</td><td>The service shall check rules for <code>HTML_BODY</code>, <code>HTML_ATTRIBUTE</code>, <code>URL</code>, and <code>JAVASCRIPT</code> in automatic mode.</td><td>Each rule is evaluated only in its supported context or contexts.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-2.4</td><td>The service shall classify a match as <code>KNOWN_XSS_PATTERN</code> and a non-match as <code>NO_KNOWN_XSS_PATTERN</code>.</td><td>No-match results must state that they are not a safety guarantee.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-2.5</td><td>The API shall accept a single explicit supported context for clients that know their output destination.</td><td>Allowed explicit values are <code>HTML_BODY</code>, <code>HTML_ATTRIBUTE</code>, <code>URL</code>, and <code>JAVASCRIPT</code>.</td><td class="priority">Medium</td></tr>
+    </table>
+
+    <h2>3.3 Module 3: Explainable Result Presentation</h2>
+    <table>
+      <tr><th>Req ID</th><th>Feature Description</th><th>Input / Validation Rule</th><th>Priority</th></tr>
+      <tr><td class="requirement-id">FR-3.1</td><td>The frontend shall display the returned classification, contexts checked, matched-rule count, and server message.</td><td>All displayed values originate from the API response or the submitted input.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-3.2</td><td>For each match, the frontend shall display rule ID, name, description, recommendation, matched context, CWE, and allowed security-reference link.</td><td>Links are limited to approved HTTPS OWASP and MITRE hosts.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-3.3</td><td>The frontend shall display submitted input as plain text.</td><td>Untrusted input must be assigned through safe DOM text APIs; unsafe HTML insertion is prohibited.</td><td class="priority">High</td></tr>
+      <tr><td class="requirement-id">FR-3.4</td><td>The frontend shall offer download of the latest result as a JSON report.</td><td>The report contains submitted input and the API response; users are informed it may contain sensitive data.</td><td class="priority">Medium</td></tr>
+    </table>
+
+    <h2>3.4 Module 4: Local Convenience Features</h2>
+    <table>
+      <tr><th>Req ID</th><th>Feature Description</th><th>Input / Validation Rule</th><th>Priority</th></tr>
+      <tr><td class="requirement-id">FR-4.1</td><td>The frontend shall retain at most ten completed analyses in browser-local history.</td><td>History is stored only in browser <code>localStorage</code> when available and can be cleared by the user.</td><td class="priority">Medium</td></tr>
+      <tr><td class="requirement-id">FR-4.2</td><td>Each history item shall show a shortened input, classification, automatic-scan label, timestamp, and Use Again action.</td><td>Use Again copies the stored text back to the editor without executing it.</td><td class="priority">Medium</td></tr>
+      <tr><td class="requirement-id">FR-4.3</td><td>The frontend shall provide a light/dark theme toggle and save the preference locally.</td><td>The theme must maintain readable contrast and respect reduced-motion preference.</td><td class="priority">Low</td></tr>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">4. External Interface Requirements</p>
+    <h1>4. External Interface Requirements</h1>
+    <h2>4.1 User Interface</h2>
+    <p>The browser interface has a header, analyzer workspace, result area, and local history. It uses responsive layouts for desktop and mobile widths. Controls must support mouse, touch, and keyboard use; visible focus indicators are required.</p>
+    <div class="screenshot-placeholder">INSERT PROJECT SCREENSHOT HERE<br><span class="small">Recommended: main analyzer page showing navigation, input editor, example buttons, and Analyze action.</span></div>
+    <div class="screenshot-placeholder">INSERT PROJECT SCREENSHOT HERE<br><span class="small">Recommended: detected result for &lt;script&gt;alert(1)&lt;/script&gt; showing rule details and CWE-79.</span></div>
+
+    <h2>4.2 Hardware Interfaces</h2>
+    <p>No dedicated hardware interface is required. The system uses standard browser input/output devices: keyboard, mouse or touch input, and a display. The server runs on a standard machine capable of running Java 17.</p>
+
+    <h2>4.3 Software Interfaces</h2>
+    <table>
+      <tr><th>Component</th><th>Interface / Responsibility</th></tr>
+      <tr><td>Browser frontend</td><td>HTML, CSS, and vanilla JavaScript. Sends JSON requests, renders text safely, manages local history and theme preference.</td></tr>
+      <tr><td>Spring Boot application</td><td>Hosts static frontend resources and exposes the analysis API using embedded Tomcat.</td></tr>
+      <tr><td>XssController</td><td>Receives <code>POST /api/analyze</code> requests and delegates analysis.</td></tr>
+      <tr><td>XssDetectionService</td><td>Validates, normalizes, selects contexts, evaluates deterministic rules, and produces a structured response.</td></tr>
+      <tr><td>InputNormalizer</td><td>Applies limited normalization before matching.</td></tr>
+      <tr><td>Browser localStorage</td><td>Optional local persistence for recent analyses and UI theme preference. It is not a backend database.</td></tr>
+    </table>
+
+    <h2>4.4 Communication Interface</h2>
+    <p>The main interface is a REST request to <code>POST /api/analyze</code>. Request and response bodies use UTF-8 JSON and the content type <code>application/json</code>.</p>
+    <table>
+      <tr><th>Request Example</th><th>Response Elements</th></tr>
+      <tr><td><pre>{
+  "input": "&lt;script&gt;alert(1)&lt;/script&gt;",
+  "context": "AUTO"
+}</pre></td><td><code>detected</code>, <code>classification</code>, <code>context</code>, <code>analyzedContexts</code>, <code>matchedRules</code>, and <code>message</code>.</td></tr>
+    </table>
+    <p>A valid analysis returns HTTP 200. Invalid input or an unreadable request body returns HTTP 400 with an <code>INVALID_INPUT</code> classification.</p>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">5. Non-Functional Requirements</p>
+    <h1>5. Non-Functional Requirements</h1>
+    <table>
+      <tr><th>Attribute</th><th>Requirement</th><th>Verification Method</th></tr>
+      <tr><td>Performance</td><td>The analyzer shall provide a responsive request state and render a result after the API responds. No artificial delay shall be added to simulate analysis.</td><td>Manual browser walkthrough and API tests under normal local academic deployment.</td></tr>
+      <tr><td>Security</td><td>Submitted input shall be treated as untrusted data. The frontend shall not use <code>innerHTML</code>, <code>eval()</code>, <code>Function()</code>, or <code>document.write()</code> for submitted content.</td><td>Source review and manual checks with XSS-like example strings.</td></tr>
+      <tr><td>Reliability</td><td>Invalid input and unreadable JSON shall result in a structured response instead of an unhandled client error. Local storage failure shall not prevent the current-session analysis flow.</td><td>Controller tests and manual storage-unavailable observation where possible.</td></tr>
+      <tr><td>Usability</td><td>The user shall enter a single string without being required to select a context. The UI shall explain automatic scanning and result limitations in clear language.</td><td>Manual usability walkthrough.</td></tr>
+      <tr><td>Accessibility</td><td>Interactive controls shall be semantic and keyboard reachable, have visible focus states, and maintain readable light/dark contrast. Reduced-motion preference shall be respected.</td><td>Keyboard navigation and browser reduced-motion inspection.</td></tr>
+      <tr><td>Portability</td><td>The UI shall adapt to desktop and mobile viewport widths in modern browsers. The backend shall run with Java 17 and Maven.</td><td>Responsive browser inspection and Maven build.</td></tr>
+      <tr><td>Maintainability</td><td>Detection rules shall remain separated from request handling, normalization, and frontend rendering. Rules must include an ID, explanation, recommendation, context, CWE, and reference.</td><td>Source-code structure review and automated tests.</td></tr>
+    </table>
+    <div class="note warning"><strong>Security limitation:</strong> A deterministic pattern match is not proof that a specific application is exploitable. A non-match is not proof of safety. Secure output handling remains the responsibility of the application that eventually uses the value.</div>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">6. System Design and Analysis Models</p>
+    <h1>6. System Design and Analysis Models</h1>
+    <h2>6.1 Use Case Summary</h2>
+    <table>
+      <tr><th>Actor</th><th>Use Case</th><th>Outcome</th></tr>
+      <tr><td>Browser User</td><td>Enter input and select Analyze</td><td>Receives a deterministic analysis result for all supported contexts.</td></tr>
+      <tr><td>Browser User</td><td>Load an example / Use Again</td><td>Places an inert sample or previous string into the editor.</td></tr>
+      <tr><td>Browser User</td><td>Review result and reference</td><td>Sees classification, rules, recommendations, CWE-79, and permitted reference links.</td></tr>
+      <tr><td>Browser User</td><td>Export / Clear local history / Change theme</td><td>Controls client-side convenience features.</td></tr>
+      <tr><td>API Client</td><td>Call POST /api/analyze</td><td>Receives the structured JSON response.</td></tr>
+    </table>
+
+    <h2>6.2 Data Flow Diagram — Level 0</h2>
+    <div class="diagram">[User / API Client]
+          |  input string + context (AUTO or explicit)
+          v
+  +---------------------------------------------+
+  | XSS Shield Detection System                 |
+  | validation → normalization → rule matching  |
+  +---------------------------------------------+
+          |  classification + rules + explanation
+          v
+     [Browser UI / API Client]</div>
+
+    <h2>6.3 Activity Flow — Automatic Browser Analysis</h2>
+    <div class="diagram">Start
+  |
+  v
+User enters a string
+  |
+  v
+Browser sends POST /api/analyze with context = AUTO
+  |
+  v
+Validate input ── invalid ──> Return INVALID_INPUT (HTTP 400)
+  |
+ valid
+  v
+Normalize input and scan all four supported contexts
+  |
+  v
+Any rule matched? ── no ──> NO_KNOWN_XSS_PATTERN
+  |
+ yes
+  v
+KNOWN_XSS_PATTERN with matched-rule details
+  |
+  v
+Frontend renders result as text and may store local history
+  |
+  v
+End</div>
+
+    <h2>6.4 Sequence Summary</h2>
+    <div class="diagram">Browser UI       XssController      XssDetectionService      Rule List
+    |                    |                       |                    |
+    | POST /api/analyze  |                       |                    |
+    |------------------->| analyze(request)      |                    |
+    |                    |---------------------->| validate/normalize |
+    |                    |                       |------------------->|
+    |                    |                       | matching rules     |
+    |                    |                       |<-------------------|
+    |                    | structured response   |                    |
+    |<-------------------|<----------------------|                    |
+    | safe text rendering / local history        |                    |</div>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">7. Acceptance Criteria and Testing</p>
+    <h1>7. Acceptance Criteria and Testing</h1>
+    <h2>7.1 Acceptance Criteria</h2>
+    <table>
+      <tr><th>ID</th><th>Acceptance Criterion</th></tr>
+      <tr><td>AC-1</td><td>Entering <code>&lt;script&gt;alert(1)&lt;/script&gt;</code> in the web UI results in <code>KNOWN_XSS_PATTERN</code> and displays the relevant rule details.</td></tr>
+      <tr><td>AC-2</td><td>Entering <code>javascript:alert(1)</code> results in a JavaScript URL-scheme match in the <code>URL</code> context.</td></tr>
+      <tr><td>AC-3</td><td>Entering <code>Hello, this is normal text.</code> results in <code>NO_KNOWN_XSS_PATTERN</code> and displays the no-safety-guarantee explanation.</td></tr>
+      <tr><td>AC-4</td><td>Blank input returns a structured <code>INVALID_INPUT</code> result.</td></tr>
+      <tr><td>AC-5</td><td>Automatic browser analysis lists all four supported contexts as checked and labels each matched rule with its context.</td></tr>
+      <tr><td>AC-6</td><td>Submitted input is shown as text and is never executed or inserted as HTML.</td></tr>
+      <tr><td>AC-7</td><td>A completed analysis is added to local browser history; Use Again restores it to the editor; Clear history removes it.</td></tr>
+      <tr><td>AC-8</td><td>The theme control persists the selected light/dark preference when browser storage is available.</td></tr>
+    </table>
+
+    <h2>7.2 Test Strategy</h2>
+    <ul>
+      <li><strong>Unit tests:</strong> Verify normalization, rule matching, benign inputs, multiple matches, invalid requests, and each supported context.</li>
+      <li><strong>Controller/API tests:</strong> Verify successful JSON responses, invalid request responses, response fields, and HTTP status behavior.</li>
+      <li><strong>Manual UI checks:</strong> Verify example buttons, clear action, automatic scanning, result display, export, history, theme toggle, responsiveness, and keyboard focus.</li>
+      <li><strong>Security checks:</strong> Confirm that test payloads remain inert text in the browser and do not execute.</li>
+    </ul>
+    <p>The project shall not report invented accuracy, precision, recall, detection-rate, risk-score, or probability values. Any future metric must be calculated from documented test corpus results.</p>
+
+    <h2>7.3 Known Limitations</h2>
+    <ul>
+      <li>The detector does not guarantee detection of every XSS technique.</li>
+      <li>Detection is limited to supported contexts and implemented rules.</li>
+      <li>Absence of a match does not prove that the input is safe.</li>
+      <li>XSS exploitability depends on the receiving application’s output handling and browser context.</li>
+      <li>The system is not a production Web Application Firewall and is not a replacement for encoding, sanitization, secure frameworks, or Content Security Policy.</li>
+    </ul>
+  </section>
+
+  <section class="page-break">
+    <p class="section-kicker">8. Academic Review and Sign-Off</p>
+    <h1>8. Academic Review and Sign-Off</h1>
+    <p>This SRS has been prepared as the requirements baseline for the B.Tech mini project, <strong>Cross-Site Scripting (XSS) Attack Detection System — XSS Shield</strong>.</p>
+    <table>
+      <tr><th>Project Coordinator / Guide</th><th>Internal Examiner</th><th>Head of Department</th></tr>
+      <tr><td style="height: 45mm; vertical-align: bottom;">Signature: __________________________<br>Date: ______________________________</td><td style="height: 45mm; vertical-align: bottom;">Signature: __________________________<br>Date: ______________________________</td><td style="height: 45mm; vertical-align: bottom;">Signature: __________________________<br>Date: ______________________________</td></tr>
+    </table>
+    <p class="footer-note">Project repository documentation: README.md and docs/PROJECT_REPORT.md. Replace bracketed cover-page placeholders and screenshot placeholders before submission.</p>
+  </section>
+</body>
+</html>
